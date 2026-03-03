@@ -9,9 +9,14 @@ public class Library {
     public BookLoan getBook(Book book) {
         if (repository.isBookInStorage(book)) {
 
+            Book newBook = new Book(
+                    idCount,
+                    "Harry Potter"
+            );
+
             BookLoan emprestimo = new BookLoan(
                     idCount,
-                    book,
+                    newBook,
                     LocalDateTime.now(),
                     LocalDateTime.now().plusDays(5),
                     0.0F

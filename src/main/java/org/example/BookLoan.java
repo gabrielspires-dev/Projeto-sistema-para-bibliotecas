@@ -9,6 +9,7 @@ public class BookLoan {
     private LocalDateTime finalDate;
     private float penalty;
 
+    // Construtor - cria e inicializa o objeto
     BookLoan(int id, Book book, LocalDateTime initialDate, LocalDateTime finalDate, float penalty) {
         this.id = id;
         this.book = book;
