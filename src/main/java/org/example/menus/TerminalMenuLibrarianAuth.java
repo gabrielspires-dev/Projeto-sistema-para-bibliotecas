@@ -1,4 +1,4 @@
-package org.example.Librarian;
+package org.example.menus;
 
 public class TerminalMenuLibrarianAuth {
     
