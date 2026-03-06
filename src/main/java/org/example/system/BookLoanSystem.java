@@ -8,6 +8,7 @@ import java.util.List;
 import org.example.entities.Book;
 import org.example.entities.BookLoan;
 import org.example.entities.Student;
+import org.example.utils.TerminalUtils;
 
 public class BookLoanSystem {
     private static int idCount = 0;
@@ -15,7 +16,8 @@ public class BookLoanSystem {
 
     public static BookLoan loanBook(Student student, Book book) {
         if (!BookSystem.isAvailable(book)) {
-            System.out.println("O livro " + book.getName() + ", do autor " + book.getAuthor() + " não está disponível.");
+            TerminalUtils.print("O livro " + book.getName() + ", do autor " + book.getAuthor() + " não está disponível.");
+            TerminalUtils.waitForInput();
             return null;
         }
 
@@ -31,7 +33,8 @@ public class BookLoanSystem {
         loans.add(loan);
         student.addBookLoan(loan);
 
-        System.out.println("O livro " + book.getName() + " foi emprestado para " + student.getName() + ".");
+        TerminalUtils.print("O livro " + book.getName() + " foi emprestado para " + student.getName() + ".");
+        TerminalUtils.waitForInput();
         return loan;
     }
 

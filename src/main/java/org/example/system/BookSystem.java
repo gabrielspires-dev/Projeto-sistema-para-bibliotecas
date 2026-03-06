@@ -5,6 +5,7 @@ import java.util.Scanner;
 
 import org.example.entities.Book;
 import org.example.repositories.BookRepository;
+import org.example.utils.TerminalUtils;
 
 public class BookSystem {
     private static int idCount = 0;
@@ -21,12 +22,14 @@ public class BookSystem {
         Book book = new Book(idCount++, name, author);
 
         if (repository.contains(book)) {
-            System.out.println("Esse livro já existe na biblioteca.");
+            TerminalUtils.print("Esse livro já existe na biblioteca.");
+            TerminalUtils.waitForInput();
             return;
         }
 
         repository.addBook(book);
-        System.out.println("Livro " + book.getName() + ", do autor: " + book.getAuthor() + ", adicionado na biblioteca.");
+        TerminalUtils.print("Livro " + book.getName() + ", do autor: " + book.getAuthor() + ", adicionado na biblioteca.");
+        TerminalUtils.waitForInput();
     }
 
     public static void removeBook() {
@@ -36,12 +39,14 @@ public class BookSystem {
         Book book = repository.getById(id);
 
         if (book == null) {
-            System.out.println("Livro com ID " + id + " não encontrado.");
+            TerminalUtils.print("Livro com ID " + id + " não encontrado.");
+            TerminalUtils.waitForInput();
             return;
         }
 
         repository.removeBook(book);
-        System.out.println("Livro " + book.getName() + ", do autor " + book.getAuthor() + " foi removido da biblioteca.");
+        TerminalUtils.print("Livro " + book.getName() + ", do autor " + book.getAuthor() + " foi removido da biblioteca.");
+        TerminalUtils.waitForInput();
     }
 
     public static boolean isAvailable(Book book) {

@@ -2,15 +2,15 @@ package org.example.menus;
 
 import java.util.List;
 import java.util.Optional;
-import java.util.Scanner;
 
 import org.example.auth.StudentAuth;
 import org.example.entities.Book;
 import org.example.system.BookLoanSystem;
 import org.example.system.BookSystem;
+import org.example.system.StudentSystem;
+import org.example.utils.TerminalUtils;
 
 public class TerminalMenuAlunoAuth {
-    private static final Scanner scanner = new Scanner(System.in);
 
     public static void print() {
         TerminalMenu menu = new TerminalMenu("Página do aluno");
@@ -18,11 +18,12 @@ public class TerminalMenuAlunoAuth {
         if (StudentAuth.isLogged()) {
             menu.addOption(1, "pegar livro emprestado", TerminalMenuAlunoAuth::listAndLoan);
             menu.addOption(2, "fazer logout", TerminalMenuAlunoAuth::logout);
-            menu.addOption(3, "voltar", () -> TerminalMainMenu.print(StudentAuth.getLoggedStudent()));
+            menu.addOption(3, "deletar conta", TerminalMenuAlunoAuth::delete);
+            menu.addOption(4, "voltar", () -> TerminalMainMenu.print(StudentAuth.getLoggedStudent()));
         } else {
             menu.addOption(1, "fazer login", StudentAuth::login);
             menu.addOption(2, "criar conta", TerminalMenuAlunoAuth::register);
-            menu.addOption(3, "voltar", () -> TerminalMainMenu.print(Optional.empty()));
+            menu.addOption(4, "voltar", () -> TerminalMainMenu.print(Optional.empty()));
         }
 
         menu.print(StudentAuth.getLoggedStudent());
@@ -38,13 +39,16 @@ public class TerminalMenuAlunoAuth {
         TerminalMainMenu.print(Optional.empty());
     }
 
+    private static void delete() {
+        StudentSystem.deleteStudent();
+    }
+
     private static void listAndLoan() {
         List<Book> books = BookSystem.getAll();
 
         if (books.isEmpty()) {
-            System.out.println("Nenhum livro disponível.");
-            System.out.println("Digite qualquer número para continuar:");
-            scanner.nextInt();
+            TerminalUtils.print("Nenhum livro disponível.");
+            TerminalUtils.waitForInput();
             TerminalMenuAlunoAuth.print();
             return;
         }
@@ -54,7 +58,7 @@ public class TerminalMenuAlunoAuth {
         );
 
         System.out.println("Digite o ID para pegar emprestado (ou -1 para cancelar):");
-        int id = scanner.nextInt();
+        int id = TerminalUtils.nextInt();
 
         if (id == -1) {
             TerminalMenuAlunoAuth.print();
@@ -64,9 +68,8 @@ public class TerminalMenuAlunoAuth {
         Book book = BookSystem.getById(id);
 
         if (book == null) {
-            System.out.println("ID inválido.");
-            System.out.println("Digite qualquer número para continuar:");
-            scanner.nextInt();
+            TerminalUtils.print("ID inválido.");
+            TerminalUtils.waitForInput();
             TerminalMenuAlunoAuth.print();
             return;
         }
@@ -75,8 +78,6 @@ public class TerminalMenuAlunoAuth {
             BookLoanSystem.loanBook(student, book)
         );
 
-        System.out.println("Digite qualquer número para continuar:");
-        scanner.nextInt();
         TerminalMenuAlunoAuth.print();
     }
 }

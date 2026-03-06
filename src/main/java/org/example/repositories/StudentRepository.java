@@ -17,6 +17,15 @@ public class StudentRepository {
         students.removeIf(student -> student.getId() == id);
     }
 
+    public Student getById(int id) {
+        for (Student student : students) {
+            if (student.getId() == id) {
+                return student;
+            };
+        }
+        return null;
+    }
+
     public List<Student> getAll() {
         return Collections.unmodifiableList(students);
     }
