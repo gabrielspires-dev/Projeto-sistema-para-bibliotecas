@@ -20,9 +20,5 @@ public class StudentRepository {
     public List<Student> getAll() {
         return Collections.unmodifiableList(students);
     }
-
-    public boolean contains(Student student) {
-        return students.contains(student);
-    }
 }
 

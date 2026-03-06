@@ -7,29 +7,31 @@ import java.util.List;
 
 import org.example.entities.Book;
 import org.example.entities.BookLoan;
+import org.example.entities.Student;
 
 public class BookLoanSystem {
     private static int idCount = 0;
     private static final ArrayList<BookLoan> loans = new ArrayList<>();
 
-    public static BookLoan loanBook(Book book) {
+    public static BookLoan loanBook(Student student, Book book) {
         if (!BookSystem.isAvailable(book)) {
-            System.out.println("O livro " + book.getName() + " não está disponível.");
+            System.out.println("O livro " + book.getName() + ", do autor " + book.getAuthor() + " não está disponível.");
             return null;
         }
 
-        Book retrievedBook = BookSystem.getBook(book);
-
         BookLoan loan = new BookLoan(
                 idCount++,
-                retrievedBook,
+                student.getId(),
+                book,
                 LocalDateTime.now(),
                 LocalDateTime.now().plusDays(30),
                 0.0F
         );
 
         loans.add(loan);
-        System.out.println("O livro " + book.getName() + " foi emprestado.");
+        student.addBookLoan(loan);
+
+        System.out.println("O livro " + book.getName() + " foi emprestado para " + student.getName() + ".");
         return loan;
     }
 

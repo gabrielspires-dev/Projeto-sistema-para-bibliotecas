@@ -18,16 +18,23 @@ public class BookRepository {
         return book;
     }
 
-    public List<Book> getAll() {
-        return Collections.unmodifiableList(storage);
-    }
-
     public boolean contains(Book book) {
-        for (Book books : storage) {
-            if (books.getName().equalsIgnoreCase(book.getName()) && books.getAuthor().equalsIgnoreCase(book.getAuthor())) {
+        for (Book b : storage) {
+            if (b.getName().equalsIgnoreCase(book.getName()) && b.getAuthor().equalsIgnoreCase(book.getAuthor())) {
                 return true;
             }
         }
         return false;
+    }
+
+    public Book getById(int id) {
+        for (Book b : storage) {
+            if (b.getId() == id) return b;
+        }
+        return null;
+    }
+
+    public List<Book> getAll() {
+        return Collections.unmodifiableList(storage);
     }
 }

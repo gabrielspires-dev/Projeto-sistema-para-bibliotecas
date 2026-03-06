@@ -4,13 +4,15 @@ import java.time.LocalDateTime;
 
 public class BookLoan {
     private int id;
+    private int studentId;
     private Book book;
     private LocalDateTime initialDate;
     private LocalDateTime finalDate;
     private float penalty;
 
-    public BookLoan(int id, Book book, LocalDateTime initialDate, LocalDateTime finalDate, float penalty) {
+    public BookLoan(int id, int studentId, Book book, LocalDateTime initialDate, LocalDateTime finalDate, float penalty) {
         this.id = id;
+        this.studentId = studentId;
         this.book = book;
         this.initialDate = initialDate;
         this.finalDate = finalDate;
@@ -19,6 +21,10 @@ public class BookLoan {
 
     public int getId() {
         return id;
+    }
+
+    public int getStudentId() {
+        return studentId;
     }
 
     public Book getBook() {

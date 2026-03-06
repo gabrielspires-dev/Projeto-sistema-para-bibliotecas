@@ -1,5 +1,6 @@
 package org.example.system;
 
+import java.util.List;
 import java.util.Scanner;
 
 import org.example.entities.Book;
@@ -17,11 +18,7 @@ public class BookSystem {
         System.out.println("Digite o autor do livro:");
         String author = scanner.nextLine();
 
-        System.out.println("Digite a quantidade:");
-        int quantity = scanner.nextInt();
-        scanner.nextLine(); // limpa o buffer após nextInt
-
-        Book book = new Book(idCount++, name, author, quantity);
+        Book book = new Book(idCount++, name, author);
 
         if (repository.contains(book)) {
             System.out.println("Esse livro já existe na biblioteca.");
@@ -30,12 +27,16 @@ public class BookSystem {
 
         repository.addBook(book);
         System.out.println("Livro " + book.getName() + ", do autor: " + book.getAuthor() + ", adicionado na biblioteca.");
-        System.out.println("Quantidade adicionada: " + book.getQuantity());
     }
 
-    public static void removeBook(Book book) {
-        if (!repository.contains(book)) {
-            System.out.println("O livro " + book.getName() + " não existe na biblioteca.");
+    public static void removeBook() {
+        System.out.println("Digite o ID do livro que deseja remover:");
+        int id = scanner.nextInt();
+
+        Book book = repository.getById(id);
+
+        if (book == null) {
+            System.out.println("Livro com ID " + id + " não encontrado.");
             return;
         }
 
@@ -47,7 +48,11 @@ public class BookSystem {
         return repository.contains(book);
     }
 
-    public static Book getBook(Book book) {
-        return repository.removeBook(book);
+    public static Book getById(int id) {
+        return repository.getById(id);
+    }
+
+    public static List<Book> getAll() {
+        return repository.getAll();
     }
 }
