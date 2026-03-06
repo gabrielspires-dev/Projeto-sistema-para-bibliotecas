@@ -1,6 +1,6 @@
 package org.example.entities;
 
-public class Librarian {
+public class Librarian implements SystemUser {
     private int id;
     private String name;
     private String password;
@@ -11,10 +11,12 @@ public class Librarian {
         this.password = password;
     }
 
+    @Override
     public int getId() {
         return id;
     }
 
+    @Override
     public String getName() {
         return name;
     }

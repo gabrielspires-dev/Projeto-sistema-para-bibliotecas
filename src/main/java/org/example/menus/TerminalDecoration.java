@@ -2,11 +2,11 @@ package org.example.menus;
 
 import java.util.Optional;
 
-import org.example.entities.Student;
+import org.example.entities.SystemUser;
 
 public class TerminalDecoration {
 
-    public static void printDecorated(Optional<Student> student, Runnable content) {
+    public static void printDecorated(Optional<? extends SystemUser> user, Runnable content) {
         for (int i = 0; i < 40; i++) System.out.println();
 
         System.out.println("========================================");
@@ -15,8 +15,8 @@ public class TerminalDecoration {
 
         System.out.println();
         System.out.println("Sistema Bibliotecário 1.0");
-        student.ifPresent(s ->
-            System.out.println("ID: " + s.getId() + " | Nome: " + s.getName() + " | Empréstimos: " + s.getBookLoanQuantity())
+        user.ifPresent(u ->
+            System.out.println("ID: " + u.getId() + " | Nome: " + u.getName())
         );
 
         for (int i = 0; i < 5; i++) System.out.println();

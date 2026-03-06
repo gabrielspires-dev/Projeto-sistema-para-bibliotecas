@@ -11,10 +11,10 @@ public class LibrarianSystem {
     private static final LibrarianRepository repository = new LibrarianRepository();
 
     public static Librarian createLibrarian() {
-        System.out.println("Digite o seu nome:");
+        TerminalUtils.print("Digite o seu nome:");
         final String name = TerminalUtils.nextLine();
 
-        System.out.println("Digite sua senha:");
+        TerminalUtils.print("Digite sua senha:");
         final String password = TerminalUtils.nextLine();
 
         Librarian librarian = new Librarian(++idCount, name, password);
@@ -23,6 +23,16 @@ public class LibrarianSystem {
         TerminalUtils.print("Conta criada! Seu ID de acesso é: " + librarian.getId() + ". Guarde essa informação.");
         TerminalUtils.waitForInput();
         return librarian;
+    }
+
+    public static Librarian findById(int id) {
+        return repository.getById(id);
+    }
+
+    public static void delete(Librarian librarian) {
+        repository.removeById(librarian.getId());
+        TerminalUtils.print("Conta de " + librarian.getName() + " removida com sucesso.");
+        TerminalUtils.waitForInput();
     }
 
     public static List<Librarian> getLibrarianList() {

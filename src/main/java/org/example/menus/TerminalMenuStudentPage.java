@@ -9,28 +9,32 @@ import org.example.system.BookSystem;
 import org.example.system.StudentSystem;
 import org.example.utils.TerminalUtils;
 
-public class TerminalMenuAlunoAuth {
+public class TerminalMenuStudentPage {
 
     public static void print() {
         TerminalMenu menu = new TerminalMenu("Página do aluno");
 
         if (StudentAuth.isLogged()) {
-            menu.addOption(1, "pegar livro emprestado", TerminalMenuAlunoAuth::listAndLoan);
-            menu.addOption(2, "logout", TerminalMenuAlunoAuth::logout);
-            menu.addOption(3, "deletar conta", TerminalMenuAlunoAuth::delete);
-            menu.addOption(4, "voltar", () -> TerminalMainMenu.print());
+            menu.addOption(1, "pegar livro emprestado", TerminalMenuStudentPage::listAndLoan);
+            menu.addOption(2, "logout", TerminalMenuStudentPage::logout);
+            menu.addOption(3, "deletar conta", TerminalMenuStudentPage::delete);
         } else {
-            menu.addOption(1, "fazer login", StudentAuth::login);
-            menu.addOption(2, "criar conta", TerminalMenuAlunoAuth::register);
+            menu.addOption(1, "fazer login", TerminalMenuStudentPage::login);
+            menu.addOption(2, "criar conta", TerminalMenuStudentPage::register);
             menu.addOption(3, "voltar", () -> TerminalMainMenu.print());
         }
 
         menu.print(StudentAuth.getLoggedStudent());
     }
 
+    private static void login() {
+        StudentAuth.login();
+        TerminalMenuStudentPage.print();
+    }
+
     private static void register() {
         StudentAuth.register();
-        TerminalMenuAlunoAuth.print();
+        TerminalMenuStudentPage.print();
     }
 
     private static void logout() {
@@ -39,7 +43,11 @@ public class TerminalMenuAlunoAuth {
     }
 
     private static void delete() {
-        StudentSystem.deleteStudent();
+        StudentAuth.getLoggedStudent().ifPresent(student -> {
+            StudentAuth.logout();
+            StudentSystem.delete(student);
+        });
+        TerminalMainMenu.print();
     }
 
     private static void listAndLoan() {
@@ -48,7 +56,7 @@ public class TerminalMenuAlunoAuth {
         if (books.isEmpty()) {
             TerminalUtils.print("Nenhum livro disponível.");
             TerminalUtils.waitForInput();
-            TerminalMenuAlunoAuth.print();
+            TerminalMenuStudentPage.print();
             return;
         }
 
@@ -60,7 +68,7 @@ public class TerminalMenuAlunoAuth {
         int id = TerminalUtils.nextInt();
 
         if (id == -1) {
-            TerminalMenuAlunoAuth.print();
+            TerminalMenuStudentPage.print();
             return;
         }
 
@@ -69,7 +77,7 @@ public class TerminalMenuAlunoAuth {
         if (book == null) {
             TerminalUtils.print("ID inválido.");
             TerminalUtils.waitForInput();
-            TerminalMenuAlunoAuth.print();
+            TerminalMenuStudentPage.print();
             return;
         }
 
@@ -77,6 +85,6 @@ public class TerminalMenuAlunoAuth {
             BookLoanSystem.loanBook(student, book)
         );
 
-        TerminalMenuAlunoAuth.print();
+        TerminalMenuStudentPage.print();
     }
 }
