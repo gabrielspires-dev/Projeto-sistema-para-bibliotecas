@@ -1,7 +1,6 @@
 package org.example.menus;
 
 import java.util.List;
-import java.util.Optional;
 
 import org.example.auth.StudentAuth;
 import org.example.entities.Book;
@@ -17,13 +16,13 @@ public class TerminalMenuAlunoAuth {
 
         if (StudentAuth.isLogged()) {
             menu.addOption(1, "pegar livro emprestado", TerminalMenuAlunoAuth::listAndLoan);
-            menu.addOption(2, "fazer logout", TerminalMenuAlunoAuth::logout);
+            menu.addOption(2, "logout", TerminalMenuAlunoAuth::logout);
             menu.addOption(3, "deletar conta", TerminalMenuAlunoAuth::delete);
-            menu.addOption(4, "voltar", () -> TerminalMainMenu.print(StudentAuth.getLoggedStudent()));
+            menu.addOption(4, "voltar", () -> TerminalMainMenu.print());
         } else {
             menu.addOption(1, "fazer login", StudentAuth::login);
             menu.addOption(2, "criar conta", TerminalMenuAlunoAuth::register);
-            menu.addOption(4, "voltar", () -> TerminalMainMenu.print(Optional.empty()));
+            menu.addOption(3, "voltar", () -> TerminalMainMenu.print());
         }
 
         menu.print(StudentAuth.getLoggedStudent());
@@ -36,7 +35,7 @@ public class TerminalMenuAlunoAuth {
 
     private static void logout() {
         StudentAuth.logout();
-        TerminalMainMenu.print(Optional.empty());
+        TerminalMainMenu.print();
     }
 
     private static void delete() {
