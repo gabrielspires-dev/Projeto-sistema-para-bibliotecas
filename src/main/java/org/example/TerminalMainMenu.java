@@ -1,6 +1,6 @@
 package org.example;
 
-import com.study.Student.TerminalMenuAlunoAuth;
+import org.example.Student.TerminalMenuAlunoAuth;
 
 public class TerminalMainMenu {
     public static void print() {

@@ -1,6 +1,6 @@
 package org.example;
 
-import com.study.Student.Student;
+import org.example.Student.Student;
 
 import java.util.Optional;
 
