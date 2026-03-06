@@ -1,18 +1,18 @@
-package org.example;
+package org.example.menus;
 
 import java.util.*;
 
+import org.example.entities.Student;
+
 public class TerminalMenu {
     private String title;
-    private List<String> options;
-    private Map<Integer, Runnable> actions;
+    private List<String> options = new ArrayList<>();
+    private Map<Integer, Runnable> actions = new HashMap<>();
 
-    private final static Scanner scanner = new Scanner(System.in);
+    private static final Scanner scanner = new Scanner(System.in);
 
     public TerminalMenu(String title) {
         this.title = title;
-        this.options = new ArrayList<>();
-        this.actions = new HashMap<>();
     }
 
     public void addOption(int number, String description, Runnable action) {
@@ -20,12 +20,10 @@ public class TerminalMenu {
         actions.put(number, action);
     }
 
-    public void print() {
-        TerminalDecoration.printDecorated(Optional.empty(), () -> {
+    public void print(Optional<Student> student) {
+        TerminalDecoration.printDecorated(student, () -> {
             System.out.println(title);
             System.out.println("----------------------------------------");
-            System.out.println("Digite suas opções");
-            System.out.println();
             options.forEach(System.out::println);
         });
 
