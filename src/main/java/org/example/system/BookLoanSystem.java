@@ -21,7 +21,7 @@ public class BookLoanSystem {
         }
 
         BookLoan loan = new BookLoan(
-                idCount++,
+                ++idCount,
                 student,
                 book,
                 LocalDateTime.now(),

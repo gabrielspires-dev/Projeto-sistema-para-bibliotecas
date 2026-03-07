@@ -4,6 +4,7 @@ import java.util.List;
 
 import org.example.auth.StudentAuth;
 import org.example.entities.Book;
+import org.example.entities.BookLoan;
 import org.example.system.BookLoanSystem;
 import org.example.system.BookSystem;
 import org.example.system.StudentSystem;
@@ -16,8 +17,9 @@ public class TerminalMenuStudentPage {
 
         if (StudentAuth.isLogged()) {
             menu.addOption(1, "pegar livro emprestado", TerminalMenuStudentPage::listAndLoan);
-            menu.addOption(2, "logout", TerminalMenuStudentPage::logout);
-            menu.addOption(3, "deletar conta", TerminalMenuStudentPage::delete);
+            menu.addOption(2, "listar seus empréstimos", TerminalMenuStudentPage::listOwnLoans);
+            menu.addOption(3, "logout", TerminalMenuStudentPage::logout);
+            menu.addOption(4, "deletar conta", TerminalMenuStudentPage::delete);
         } else {
             menu.addOption(1, "fazer login", TerminalMenuStudentPage::login);
             menu.addOption(2, "criar conta", TerminalMenuStudentPage::register);
@@ -48,6 +50,27 @@ public class TerminalMenuStudentPage {
             StudentSystem.delete(student);
         });
         TerminalMainMenu.print();
+    }
+
+    private static void listOwnLoans() {
+        StudentAuth.getLoggedStudent().ifPresent(student -> {
+            List<BookLoan> ownBookLoans =  student.getBookLoans();
+
+            ownBookLoans.forEach(ownBookLoan -> {
+                System.out.println();
+                System.out.println("------------------------------------------");
+                System.out.println("ID Empréstimo : " + ownBookLoan.getId());
+                System.out.println("Livro         : " + ownBookLoan.getBook().getName() + " - " + ownBookLoan.getBook().getAuthor());
+                System.out.println("Data retirada : " + ownBookLoan.getInitialDate());
+                System.out.println("Devolução     : " + ownBookLoan.getFinalDate());
+                System.out.println("Multa         : R$ " + ownBookLoan.getPenalty());
+                System.out.println("------------------------------------------");
+            });
+
+            TerminalUtils.waitForInput();
+        });
+
+        TerminalMenuStudentPage.print();
     }
 
     private static void listAndLoan() {
