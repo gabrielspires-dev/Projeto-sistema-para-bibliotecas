@@ -1,6 +1,7 @@
 package org.example.entities;
 
 import java.time.LocalDateTime;
+import java.time.temporal.ChronoUnit;
 
 public class BookLoan {
     private int id;
@@ -40,6 +41,12 @@ public class BookLoan {
     }
 
     public float getPenalty() {
-        return penalty;
+        LocalDateTime now = LocalDateTime.now();
+        if (now.isBefore(finalDate)) {
+            return 0.0F;
+        }
+
+        long daysLate = ChronoUnit.DAYS.between(finalDate, now);
+        return 4.0F + (daysLate * 0.5F);
     }
 }

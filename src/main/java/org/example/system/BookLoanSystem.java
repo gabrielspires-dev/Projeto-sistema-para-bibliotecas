@@ -33,9 +33,24 @@ public class BookLoanSystem {
         student.addBookLoan(loan);
         BookSystem.removeBook(book);
 
-        TerminalUtils.print("O livro " + book.getName() + " foi emprestado para " + student.getName() + " com ID " + student.getId());
+        TerminalUtils.print("O livro " + book.getName() + " foi emprestado para " + student.getName() + " com ID " + student.getId() + ".");
         TerminalUtils.waitForInput();
         return loan;
+    }
+
+    public static void returnBook(Student student, BookLoan loan) {
+        float penalty = loan.getPenalty();
+
+        student.removeBookLoan(loan);
+        BookSystem.addBook(loan.getBook());
+
+        if (penalty > 0) {
+            TerminalUtils.print("Livro devolvido com atraso. Multa: R$ " + penalty);
+        } else {
+            TerminalUtils.print("Livro \"" + loan.getBook().getName() + "\" devolvido com sucesso, sem multa.");
+        }
+
+        TerminalUtils.waitForInput();
     }
 
     public static void printAllLoans() {
@@ -58,9 +73,7 @@ public class BookLoanSystem {
             System.out.println("Multa         : R$ " + loan.getPenalty());
             System.out.println("------------------------------------------");
         });
-        
+
         TerminalUtils.waitForInput();
     }
-
-    // TODO: returnBook(BookLoan loan) — verificar multa e devolver ao BookSystem
 }

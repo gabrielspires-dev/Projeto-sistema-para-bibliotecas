@@ -17,9 +17,10 @@ public class TerminalMenuStudentPage {
 
         if (StudentAuth.isLogged()) {
             menu.addOption(1, "pegar livro emprestado", TerminalMenuStudentPage::listAndLoan);
-            menu.addOption(2, "listar seus empréstimos", TerminalMenuStudentPage::listOwnLoans);
-            menu.addOption(3, "logout", TerminalMenuStudentPage::logout);
-            menu.addOption(4, "deletar conta", TerminalMenuStudentPage::delete);
+            menu.addOption(2, "devolver empréstimo", TerminalMenuStudentPage::listAndReturn);
+            menu.addOption(3, "listar seus empréstimos", TerminalMenuStudentPage::listOwnLoans);
+            menu.addOption(4, "logout", TerminalMenuStudentPage::logout);
+            menu.addOption(5, "deletar conta", TerminalMenuStudentPage::delete);
         } else {
             menu.addOption(1, "fazer login", TerminalMenuStudentPage::login);
             menu.addOption(2, "criar conta", TerminalMenuStudentPage::register);
@@ -54,20 +55,73 @@ public class TerminalMenuStudentPage {
 
     private static void listOwnLoans() {
         StudentAuth.getLoggedStudent().ifPresent(student -> {
-            List<BookLoan> ownBookLoans =  student.getBookLoans();
+            List<BookLoan> loans = student.getBookLoans();
 
-            ownBookLoans.forEach(ownBookLoan -> {
+            if (loans.isEmpty()) {
+                TerminalUtils.print("Você não possui empréstimos.");
+                TerminalUtils.waitForInput();
+                return;
+            }
+
+            loans.forEach(loan -> {
                 System.out.println();
                 System.out.println("------------------------------------------");
-                System.out.println("ID Empréstimo : " + ownBookLoan.getId());
-                System.out.println("Livro         : " + ownBookLoan.getBook().getName() + " - " + ownBookLoan.getBook().getAuthor());
-                System.out.println("Data retirada : " + ownBookLoan.getInitialDate());
-                System.out.println("Devolução     : " + ownBookLoan.getFinalDate());
-                System.out.println("Multa         : R$ " + ownBookLoan.getPenalty());
+                System.out.println("ID Empréstimo : " + loan.getId());
+                System.out.println("Livro         : " + loan.getBook().getName() + " - " + loan.getBook().getAuthor());
+                System.out.println("Data retirada : " + loan.getInitialDate());
+                System.out.println("Devolução     : " + loan.getFinalDate());
+                System.out.println("Multa         : R$ " + loan.getPenalty());
                 System.out.println("------------------------------------------");
             });
 
             TerminalUtils.waitForInput();
+        });
+
+        TerminalMenuStudentPage.print();
+    }
+
+    private static void listAndReturn() {
+        StudentAuth.getLoggedStudent().ifPresent(student -> {
+            List<BookLoan> loans = student.getBookLoans();
+
+            if (loans.isEmpty()) {
+                TerminalUtils.print("Você não possui empréstimos.");
+                TerminalUtils.waitForInput();
+                TerminalMenuStudentPage.print();
+                return;
+            }
+
+            loans.forEach(loan -> {
+                System.out.println();
+                System.out.println("------------------------------------------");
+                System.out.println("ID Empréstimo : " + loan.getId());
+                System.out.println("Livro         : " + loan.getBook().getName() + " - " + loan.getBook().getAuthor());
+                System.out.println("Devolução     : " + loan.getFinalDate());
+                System.out.println("Multa         : R$ " + loan.getPenalty());
+                System.out.println("------------------------------------------");
+            });
+
+            TerminalUtils.print("Digite o ID do empréstimo para devolver (ou -1 para cancelar):");
+            int id = TerminalUtils.nextInt();
+
+            if (id == -1) {
+                TerminalMenuStudentPage.print();
+                return;
+            }
+
+            BookLoan loan = loans.stream()
+                    .filter(l -> l.getId() == id)
+                    .findFirst()
+                    .orElse(null);
+
+            if (loan == null) {
+                TerminalUtils.print("ID inválido.");
+                TerminalUtils.waitForInput();
+                TerminalMenuStudentPage.print();
+                return;
+            }
+
+            BookLoanSystem.returnBook(student, loan);
         });
 
         TerminalMenuStudentPage.print();

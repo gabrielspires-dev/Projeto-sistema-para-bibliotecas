@@ -17,7 +17,7 @@ public class BookSystem {
         TerminalUtils.print("Digite o autor do livro:");
         String author = TerminalUtils.nextLine();
 
-        Book book = new Book(++idCount, name, author);
+        Book book = new Book(idCount++, name, author);
 
         if (repository.contains(book)) {
             TerminalUtils.print("Esse livro já existe na biblioteca.");
@@ -30,6 +30,12 @@ public class BookSystem {
         TerminalUtils.waitForInput();
     }
 
+    public static void removeBook(Book book) {
+        repository.removeBook(book);
+        TerminalUtils.print("Livro " + book.getName() + ", do autor " + book.getAuthor() + " foi removido da biblioteca.");
+        TerminalUtils.waitForInput();
+    }
+
     public static void removeBookById(int id) {
         Book book = repository.getById(id);
 
@@ -38,15 +44,14 @@ public class BookSystem {
             TerminalUtils.waitForInput();
             return;
         }
+
         repository.removeBook(book);
         TerminalUtils.print("Livro " + book.getName() + ", do autor " + book.getAuthor() + " foi removido da biblioteca.");
         TerminalUtils.waitForInput();
     }
 
-    public static void removeBook(Book book) {
-        repository.removeBook(book);
-        TerminalUtils.print("Livro " + book.getName() + ", do autor " + book.getAuthor() + " foi removido da biblioteca.");
-        TerminalUtils.waitForInput();
+    public static void addBook(Book book) {
+        repository.addBook(book);
     }
 
     public static boolean isAvailable(Book book) {
@@ -61,3 +66,6 @@ public class BookSystem {
         return repository.getAll();
     }
 }
+
+
+

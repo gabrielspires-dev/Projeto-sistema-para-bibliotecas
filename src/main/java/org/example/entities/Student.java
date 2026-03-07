@@ -17,7 +17,7 @@ public class Student implements SystemUser {
     }
 
     @Override
-    public int getId() {
+    public int getId() { 
         return id;
     }
 
@@ -32,6 +32,10 @@ public class Student implements SystemUser {
 
     public void addBookLoan(BookLoan loan) {
         bookLoans.add(loan);
+    }
+
+    public void removeBookLoan(BookLoan loan) {
+        bookLoans.remove(loan);
     }
 
     public List<BookLoan> getBookLoans() {
