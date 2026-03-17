@@ -4,11 +4,12 @@ import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
 
-public class    Student implements SystemUser {
+public class Student implements SystemUser {
     private int id;
     private String name;
     private String password;
     private ArrayList<BookLoan> bookLoans = new ArrayList<>();
+    private float pendingPenalty = 0.0F;
 
     public Student(int id, String name, String password) {
         this.id = id;
@@ -41,13 +42,4 @@ public class    Student implements SystemUser {
     public List<BookLoan> getBookLoans() {
         return Collections.unmodifiableList(bookLoans);
     }
-
-    public int getBookLoanQuantity() {
-        return bookLoans.size();
-    }
-}
-public float payPenalty (){
-    float paid = this.pendingPenalty;
-    this.payPenalty = 0.0F;
-            return paid;
 }
