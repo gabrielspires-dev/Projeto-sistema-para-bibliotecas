@@ -4,7 +4,7 @@ import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
 
-public class Student implements SystemUser {
+public class    Student implements SystemUser {
     private int id;
     private String name;
     private String password;
@@ -45,4 +45,9 @@ public class Student implements SystemUser {
     public int getBookLoanQuantity() {
         return bookLoans.size();
     }
+}
+public float payPenalty (){
+    float paid = this.pendingPenalty;
+    this.payPenalty = 0.0F;
+            return paid;
 }
