@@ -5,6 +5,10 @@ import java.util.List;
 import org.example.auth.StudentAuth;
 import org.example.entities.Book;
 import org.example.entities.BookLoan;
+import org.example.entities.Student;
+import org.example.exceptions.BookNotAvailableException;
+import org.example.exceptions.BookNotFoundException;
+import org.example.exceptions.PendingPenaltyException;
 import org.example.system.BookLoanSystem;
 import org.example.system.BookSystem;
 import org.example.system.StudentSystem;
@@ -19,8 +23,9 @@ public class TerminalMenuStudentPage {
             menu.addOption(1, "pegar livro emprestado", TerminalMenuStudentPage::listAndLoan);
             menu.addOption(2, "devolver empréstimo", TerminalMenuStudentPage::listAndReturn);
             menu.addOption(3, "listar seus empréstimos", TerminalMenuStudentPage::listOwnLoans);
-            menu.addOption(4, "logout", TerminalMenuStudentPage::logout);
-            menu.addOption(5, "deletar conta", TerminalMenuStudentPage::delete);
+            menu.addOption(4, "pagar multa pendente", TerminalMenuStudentPage::payPenalty);
+            menu.addOption(5, "logout", TerminalMenuStudentPage::logout);
+            menu.addOption(6, "deletar conta", TerminalMenuStudentPage::delete);
         } else {
             menu.addOption(1, "fazer login", TerminalMenuStudentPage::login);
             menu.addOption(2, "criar conta", TerminalMenuStudentPage::register);
@@ -53,6 +58,20 @@ public class TerminalMenuStudentPage {
         TerminalMainMenu.print();
     }
 
+    private static void payPenalty() {
+        StudentAuth.getLoggedStudent().ifPresent(student -> {
+            float pending = student.getPendingPenalty();
+            if (pending <= 0) {
+                TerminalUtils.print("Você não possui multas pendentes.");
+            } else {
+                student.payPenalty();
+                TerminalUtils.print("Multa de R$ " + pending + " paga com sucesso!");
+            }
+            TerminalUtils.waitForInput();
+        });
+        TerminalMenuStudentPage.print();
+    }
+
     private static void listOwnLoans() {
         StudentAuth.getLoggedStudent().ifPresent(student -> {
             List<BookLoan> loans = student.getBookLoans();
@@ -62,6 +81,8 @@ public class TerminalMenuStudentPage {
                 TerminalUtils.waitForInput();
                 return;
             }
+
+            TerminalUtils.print("Multa pendente no perfil: R$ " + student.getPendingPenalty());
 
             loans.forEach(loan -> {
                 System.out.println();
@@ -138,7 +159,7 @@ public class TerminalMenuStudentPage {
         }
 
         books.forEach(book ->
-            System.out.println("[ID " + book.getId() + "] " + book.getName() + " - " + book.getAuthor())
+                System.out.println("[ID " + book.getId() + "] " + book.getName() + " - " + book.getAuthor())
         );
 
         System.out.println("Digite o ID para pegar emprestado (ou -1 para cancelar):");
@@ -151,16 +172,14 @@ public class TerminalMenuStudentPage {
 
         Book book = BookSystem.getById(id);
 
-        if (book == null) {
-            TerminalUtils.print("ID inválido.");
-            TerminalUtils.waitForInput();
-            TerminalMenuStudentPage.print();
-            return;
-        }
-
-        StudentAuth.getLoggedStudent().ifPresent(student ->
-            BookLoanSystem.loanBook(student, book)
-        );
+        StudentAuth.getLoggedStudent().ifPresent(student -> {
+            try {
+                BookLoanSystem.loanBook(student, book);
+            } catch (BookNotFoundException | BookNotAvailableException | PendingPenaltyException e) {
+                TerminalUtils.print("Erro: " + e.getMessage());
+                TerminalUtils.waitForInput();
+            }
+        });
 
         TerminalMenuStudentPage.print();
     }
