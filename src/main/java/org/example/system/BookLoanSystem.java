@@ -6,6 +6,9 @@ import java.util.List;
 import org.example.entities.Book;
 import org.example.entities.BookLoan;
 import org.example.entities.Student;
+import org.example.exceptions.BookNotAvailableException;
+import org.example.exceptions.BookNotFoundException;
+import org.example.exceptions.PendingPenaltyException;
 import org.example.repositories.BookLoanRepository;
 import org.example.utils.TerminalUtils;
 
@@ -13,11 +16,22 @@ public class BookLoanSystem {
     private static int idCount = 0;
     private static final BookLoanRepository repository = new BookLoanRepository();
 
-    public static BookLoan loanBook(Student student, Book book) {
+    public static BookLoan loanBook(Student student, Book book)
+            throws BookNotFoundException, BookNotAvailableException, PendingPenaltyException {
+
+        if (book == null) {
+            throw new BookNotFoundException("O livro solicitado não existe no sistema.");
+        }
+
         if (!BookSystem.isAvailable(book)) {
-            TerminalUtils.print("O livro " + book.getName() + ", do autor " + book.getAuthor() + " não está disponível.");
-            TerminalUtils.waitForInput();
-            return null;
+            throw new BookNotAvailableException("O livro \"" + book.getName() + "\" não está disponível no momento.");
+        }
+
+        if (student.getPendingPenalty() > 0) {
+            throw new PendingPenaltyException(
+                    "Você possui uma multa pendente de R$ " + student.getPendingPenalty() +
+                            ". Quite o valor antes de realizar um novo empréstimo."
+            );
         }
 
         BookLoan loan = new BookLoan(
@@ -33,7 +47,8 @@ public class BookLoanSystem {
         student.addBookLoan(loan);
         BookSystem.removeBook(book);
 
-        TerminalUtils.print("O livro " + book.getName() + " foi emprestado para " + student.getName() + " com ID " + student.getId() + ".");
+        TerminalUtils.print("O livro \"" + book.getName() + "\" foi emprestado para "
+                + student.getName() + " com sucesso. Devolução em 30 dias.");
         TerminalUtils.waitForInput();
         return loan;
     }
@@ -45,12 +60,18 @@ public class BookLoanSystem {
         BookSystem.addBook(loan.getBook());
 
         if (penalty > 0) {
-            TerminalUtils.print("Livro devolvido com atraso. Multa: R$ " + penalty);
+            student.addPendingPenalty(penalty);
+            TerminalUtils.print("Livro devolvido com atraso. Multa de R$ " + penalty
+                    + " adicionada ao seu perfil. Quite antes do próximo empréstimo.");
         } else {
             TerminalUtils.print("Livro \"" + loan.getBook().getName() + "\" devolvido com sucesso, sem multa.");
         }
 
         TerminalUtils.waitForInput();
+    }
+
+    public static void reRegisterLoan(BookLoan loan) {
+        repository.add(loan);
     }
 
     public static void printAllLoans() {
