@@ -35,6 +35,16 @@ public class LibrarianSystem {
         TerminalUtils.waitForInput();
     }
 
+    // Usado pelo PersistenceService ao carregar dados do disco.
+    // Insere o bibliotecário diretamente no repositório sem interação com o terminal
+    // e sincroniza o contador de IDs para evitar colisões futuras.
+    public static void addLibrarian(Librarian librarian) {
+        repository.add(librarian);
+        if (librarian.getId() >= idCount) {
+            idCount = librarian.getId() + 1;
+        }
+    }
+
     public static List<Librarian> getLibrarianList() {
         return repository.getAll();
     }

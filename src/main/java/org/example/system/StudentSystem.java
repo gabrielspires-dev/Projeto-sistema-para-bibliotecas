@@ -41,6 +41,16 @@ public class StudentSystem {
         TerminalUtils.waitForInput();
     }
 
+    // Usado pelo PersistenceService ao carregar dados do disco.
+    // Insere o aluno diretamente no repositório sem interação com o terminal
+    // e sincroniza o contador de IDs para evitar colisões futuras.
+    public static void addStudent(Student student) {
+        repository.add(student);
+        if (student.getId() >= idCount) {
+            idCount = student.getId() + 1;
+        }
+    }
+
     public static List<Student> getStudentList() {
         return repository.getAll();
     }

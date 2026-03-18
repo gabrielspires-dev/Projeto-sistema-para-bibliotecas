@@ -27,6 +27,8 @@ public class PersistenceService {
             .setPrettyPrinting()
             .create();
 
+    // ---- SALVAR / CARREGAR TUDO ----
+
     public static void saveAll() {
         new File(DIR).mkdirs();
         saveBooks();
@@ -43,6 +45,8 @@ public class PersistenceService {
     }
 
     // ---- LIVROS ----
+    // Salva apenas os livros disponíveis (que estão no repositório principal).
+    // Os livros atualmente emprestados são salvos dentro de saveLoans().
 
     private static void saveBooks() {
         write("books.json", BookSystem.getAll());
@@ -63,7 +67,6 @@ public class PersistenceService {
         List<Librarian> list = read("librarians.json",
                 new TypeToken<List<Librarian>>(){}.getType());
         if (list != null) list.forEach(LibrarianSystem::addLibrarian);
-        // Adicione um método addLibrarian() no LibrarianSystem (veja abaixo)
     }
 
     // ---- ALUNOS ----
@@ -76,12 +79,12 @@ public class PersistenceService {
         List<Student> list = read("students.json",
                 new TypeToken<List<Student>>(){}.getType());
         if (list != null) list.forEach(StudentSystem::addStudent);
-        // Adicione um método addStudent() no StudentSystem (veja abaixo)
     }
 
     // ---- EMPRÉSTIMOS ----
-    // Empréstimos são mais complexos porque referenciam Book e Student.
-    // Salvamos como DTOs simples com IDs.
+    // Empréstimos referenciam Book e Student por objetos.
+    // Usamos um DTO com IDs para serialização e incluímos o Book completo,
+    // pois livros emprestados são removidos do repositório principal.
 
     private static void saveLoans() {
         List<LoanDTO> dtos = new ArrayList<>();
@@ -100,13 +103,18 @@ public class PersistenceService {
 
         for (LoanDTO dto : dtos) {
             Student student = StudentSystem.findById(dto.studentId);
-            Book book = BookSystem.findInAllBooks(dto.bookId);
-            // findInAllBooks precisa buscar inclusive livros emprestados
+
+            // O livro emprestado não está no repositório principal (foi removido
+            // quando o empréstimo foi criado). Por isso salvamos o Book completo
+            // dentro do próprio DTO e o reconstruímos diretamente aqui.
+            Book book = dto.book;
+
             if (student == null || book == null) continue;
 
             BookLoan loan = new BookLoan(
                     dto.id, student, book,
                     dto.initialDate, dto.finalDate, 0.0F);
+
             student.addBookLoan(loan);
             BookLoanSystem.reRegisterLoan(loan);
         }
@@ -133,17 +141,24 @@ public class PersistenceService {
         }
     }
 
-    // DTO interno para empréstimos
+    // ---- DTO interno para empréstimos ----
+    // Guarda o Book completo em vez de apenas o bookId, porque livros
+    // emprestados são removidos do BookRepository e não podem ser
+    // encontrados via BookSystem.getById() durante o carregamento.
+
     private static class LoanDTO {
-        int id, studentId, bookId;
-        LocalDateTime initialDate, finalDate;
+        int id;
+        int studentId;
+        Book book;           // objeto completo salvo no JSON
+        LocalDateTime initialDate;
+        LocalDateTime finalDate;
 
         LoanDTO(BookLoan loan) {
-            this.id = loan.getId();
-            this.studentId = loan.getStudent().getId();
-            this.bookId = loan.getBook().getId();
+            this.id          = loan.getId();
+            this.studentId   = loan.getStudent().getId();
+            this.book        = loan.getBook();
             this.initialDate = loan.getInitialDate();
-            this.finalDate = loan.getFinalDate();
+            this.finalDate   = loan.getFinalDate();
         }
     }
 }
