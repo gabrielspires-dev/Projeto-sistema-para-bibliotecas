@@ -18,18 +18,12 @@ public class Student implements SystemUser {
     }
 
     @Override
-    public int getId() { 
-        return id;
-    }
+    public int getId() { return id; }
 
     @Override
-    public String getName() {
-        return name;
-    }
+    public String getName() { return name; }
 
-    public String getPassword() {
-        return password;
-    }
+    public String getPassword() { return password; }
 
     public void addBookLoan(BookLoan loan) {
         bookLoans.add(loan);
@@ -41,5 +35,21 @@ public class Student implements SystemUser {
 
     public List<BookLoan> getBookLoans() {
         return Collections.unmodifiableList(bookLoans);
+    }
+
+    public int getBookLoanQuantity() {
+        return bookLoans.size();
+    }
+
+    public float getPendingPenalty() {
+        return pendingPenalty;
+    }
+
+    public void addPendingPenalty(float value) {
+        this.pendingPenalty += value;
+    }
+
+    public void payPenalty() {
+        this.pendingPenalty = 0.0F;
     }
 }
