@@ -1,10 +1,10 @@
-# 📚 Sistema Bibliotecário
+#  Sistema Bibliotecário
 
 Sistema de gerenciamento de biblioteca desenvolvido em Java como trabalho acadêmico da disciplina de **Programação Orientada a Objetos**. Permite o cadastro de livros, gestão de alunos, controle de empréstimos e aplicação de multas por atraso.
 
 ---
 
-## ✨ Funcionalidades
+##  Funcionalidades
 
 - **Autenticação** — Login e cadastro separados para Alunos e Bibliotecários, com senha e ID único
 - **Gestão de Livros** — Cadastro e remoção de livros pelo bibliotecário
@@ -17,7 +17,7 @@ Sistema de gerenciamento de biblioteca desenvolvido em Java como trabalho acadê
 
 ---
 
-## 🏗️ Arquitetura
+##  Arquitetura
 
 O projeto segue uma arquitetura em camadas inspirada nos princípios de POO:
 
@@ -36,7 +36,7 @@ src/main/java/org/example/
 
 ---
 
-## 🔄 Fluxo principal
+##  Fluxo principal
 
 ```
 Início
@@ -56,14 +56,14 @@ Início
 
 ---
 
-## ⚙️ Pré-requisitos
+##  Pré-requisitos
 
 - Java **18+**
 - Maven **3.8+**
 
 ---
 
-## 🚀 Como executar
+##  Como executar
 
 **1. Clone o repositório**
 ```bash
@@ -85,7 +85,7 @@ mvn exec:java -Dexec.mainClass="org.example.Main"
 
 ---
 
-## 🧪 Exceções tratadas
+##  Exceções tratadas
 
 | Situação | Exceção |
 |---|---|
@@ -95,7 +95,7 @@ mvn exec:java -Dexec.mainClass="org.example.Main"
 
 ---
 
-## 🛠️ Tecnologias utilizadas
+##  Tecnologias utilizadas
 
 | Tecnologia | Uso |
 |---|---|
@@ -105,7 +105,7 @@ mvn exec:java -Dexec.mainClass="org.example.Main"
 
 ---
 
-## 📁 Estrutura de dados persistidos
+##  Estrutura de dados persistidos
 
 Após a primeira execução, a pasta `data/` conterá:
 
@@ -116,12 +116,6 @@ data/
 ├── librarians.json   # Cadastro de bibliotecários
 └── loans.json        # Empréstimos ativos (com o livro embutido no JSON)
 ```
-
----
-
-## 👥 Autores
-
-Desenvolvido para a disciplina de **Programação Orientada a Objetos**
 
 ---
 
