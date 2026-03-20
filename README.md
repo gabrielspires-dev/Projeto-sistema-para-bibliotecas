@@ -122,7 +122,6 @@ data/
 ## 👥 Autores
 
 Desenvolvido para a disciplina de **Programação Orientada a Objetos**
-Docente: Gabriela de Matos Cezar
 
 ---
 
