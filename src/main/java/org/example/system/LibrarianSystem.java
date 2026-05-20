@@ -3,6 +3,7 @@ package org.example.system;
 import java.util.List;
 
 import org.example.entities.Librarian;
+import org.example.persistence.DbConfig;
 import org.example.repositories.LibrarianRepository;
 import org.example.utils.TerminalUtils;
 
@@ -17,7 +18,10 @@ public class LibrarianSystem {
         TerminalUtils.print("Digite sua senha:");
         final String password = TerminalUtils.nextLine();
 
-        Librarian librarian = new Librarian(++idCount, name, password);
+        // ID temporário: se Supabase estiver ativo, o banco gera o ID real (SERIAL)
+        // e o repositório o aplica via librarian.setId(dbId).
+        int tempId = DbConfig.isConfigured() ? 0 : ++idCount;
+        Librarian librarian = new Librarian(tempId, name, password);
         repository.add(librarian);
 
         TerminalUtils.print("Conta criada! Seu ID de acesso é: " + librarian.getId() + ". Guarde essa informação.");

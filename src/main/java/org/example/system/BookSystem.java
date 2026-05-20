@@ -3,6 +3,7 @@ package org.example.system;
 import java.util.List;
 
 import org.example.entities.Book;
+import org.example.persistence.DbConfig;
 import org.example.repositories.BookRepository;
 import org.example.utils.TerminalUtils;
 
@@ -17,7 +18,9 @@ public class BookSystem {
         TerminalUtils.print("Digite o autor do livro:");
         String author = TerminalUtils.nextLine();
 
-        Book book = new Book(idCount++, name, author);
+        // ID temporário. Se Supabase estiver ativo, o banco gera o real via SERIAL
+        // e o repositório o aplica via book.setId(dbId).
+        Book book = new Book(DbConfig.isConfigured() ? 0 : idCount++, name, author);
 
         if (repository.contains(book)) {
             TerminalUtils.print("Esse livro já existe na biblioteca.");

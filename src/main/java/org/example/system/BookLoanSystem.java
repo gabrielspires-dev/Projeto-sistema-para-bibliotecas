@@ -9,6 +9,7 @@ import org.example.entities.Student;
 import org.example.exceptions.BookNotAvailableException;
 import org.example.exceptions.BookNotFoundException;
 import org.example.exceptions.PendingPenaltyException;
+import org.example.persistence.DbConfig;
 import org.example.repositories.BookLoanRepository;
 import org.example.utils.TerminalUtils;
 
@@ -34,12 +35,16 @@ public class BookLoanSystem {
             );
         }
 
+        LocalDateTime now = LocalDateTime.now();
+        // ID temporário: se Supabase estiver ativo, o banco gera o ID real (SERIAL)
+        // e o repositório o aplica via loan.setId(dbId).
+        int tempId = DbConfig.isConfigured() ? 0 : ++idCount;
         BookLoan loan = new BookLoan(
-                ++idCount,
+                tempId,
                 student,
                 book,
-                LocalDateTime.now(),
-                LocalDateTime.now().plusDays(30),
+                now,
+                now.plusDays(30),
                 0.0F
         );
 
@@ -57,10 +62,12 @@ public class BookLoanSystem {
         float penalty = loan.getPenalty();
 
         student.removeBookLoan(loan);
+        repository.remove(loan);
         BookSystem.addBook(loan.getBook());
 
         if (penalty > 0) {
             student.addPendingPenalty(penalty);
+            StudentSystem.update(student);
             TerminalUtils.print("Livro devolvido com atraso. Multa de R$ " + penalty
                     + " adicionada ao seu perfil. Quite antes do próximo empréstimo.");
         } else {

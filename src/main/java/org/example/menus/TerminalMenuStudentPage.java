@@ -65,6 +65,7 @@ public class TerminalMenuStudentPage {
                 TerminalUtils.print("Você não possui multas pendentes.");
             } else {
                 student.payPenalty();
+                StudentSystem.update(student);
                 TerminalUtils.print("Multa de R$ " + pending + " paga com sucesso!");
             }
             TerminalUtils.waitForInput();
