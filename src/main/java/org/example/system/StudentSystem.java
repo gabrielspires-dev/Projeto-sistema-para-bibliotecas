@@ -22,9 +22,13 @@ public class StudentSystem {
         // e o repositório o aplica via student.setId(dbId).
         int tempId = DbConfig.isConfigured() ? 0 : ++idCount;
         Student student = new Student(tempId, name, password);
-        repository.add(student);
+        boolean created = repository.add(student);
 
-        TerminalUtils.print("Conta criada! Seu ID de acesso é: " + student.getId() + ". Guarde essa informação.");
+        if (created) {
+            TerminalUtils.print("Conta criada! Seu ID de acesso é: " + student.getId() + ". Guarde essa informação.");
+        } else {
+            TerminalUtils.print("Falha ao criar conta. Verifique se as tabelas do Supabase existem e se a conexão está correta.");
+        }
         TerminalUtils.waitForInput();
         return student;
     }

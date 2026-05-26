@@ -17,7 +17,7 @@ import org.example.system.BookSystem;
 public class StudentRepository {
 
     // ---- Supabase: ADD ----
-    public void add(Student student) {
+    public boolean add(Student student) {
         if (DbConfig.isConfigured()) {
             JsonObject json = new JsonObject();
             json.addProperty("name", student.getName());
@@ -26,9 +26,12 @@ public class StudentRepository {
             String response = SupabaseClient.post("students", json.toString());
             if (response != null) {
                 JsonArray array = SupabaseClient.GSON.fromJson(response, JsonArray.class);
-                if (array != null && array.size() > 0)
+                if (array != null && array.size() > 0) {
                     student.setId(array.get(0).getAsJsonObject().get("id").getAsInt());
+                    return true;
+                }
             }
+            return false;
         } else {
             // SQLite cache
             String sql = "INSERT INTO students (name, password, pending_penalty) VALUES (?,?,?)";
@@ -41,9 +44,11 @@ public class StudentRepository {
                 try (ResultSet rs = ps.getGeneratedKeys()) {
                     if (rs.next()) student.setId(rs.getInt(1));
                 }
+                return true;
             } catch (SQLException e) {
                 System.err.println("[cache.db] Erro ao salvar aluno: " + e.getMessage());
             }
+            return false;
         }
     }
 

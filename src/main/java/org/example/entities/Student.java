@@ -15,6 +15,13 @@ public class Student implements SystemUser {
         this.id = id;
         this.name = name;
         this.password = password;
+        ensureBookLoans();
+    }
+
+    private void ensureBookLoans() {
+        if (bookLoans == null) {
+            bookLoans = new ArrayList<>();
+        }
     }
 
     @Override
@@ -28,19 +35,22 @@ public class Student implements SystemUser {
     public String getPassword() { return password; }
 
     public void addBookLoan(BookLoan loan) {
+        ensureBookLoans();
         bookLoans.add(loan);
     }
 
     public void removeBookLoan(BookLoan loan) {
+        ensureBookLoans();
         bookLoans.remove(loan);
     }
 
     public List<BookLoan> getBookLoans() {
+        ensureBookLoans();
         return Collections.unmodifiableList(bookLoans);
     }
 
     public int getBookLoanQuantity() {
-        return bookLoans.size();
+        return bookLoans == null ? 0 : bookLoans.size();
     }
 
     public float getPendingPenalty() {
