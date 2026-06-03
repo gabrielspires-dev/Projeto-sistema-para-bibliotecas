@@ -8,6 +8,8 @@ import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
 
+import java.io.ByteArrayInputStream;
+import java.io.InputStream;
 import java.util.List;
 
 import static org.junit.jupiter.api.Assertions.*;
@@ -20,37 +22,44 @@ class BookSystemTest {
     @Mock
     private BookDAO mockRepo;
 
+    private InputStream originalIn;
+
     @BeforeEach
     void injectMock() {
+        originalIn = System.in; // salva o System.in original
         BookSystem.setRepository(mockRepo);
     }
 
     @AfterEach
     void restoreDefault() {
+        System.setIn(originalIn); // restaura o System.in
         BookSystem.setRepository(new org.example.repositories.BookRepository());
     }
 
     @Test
     @DisplayName("registerBook: deve adicionar livro no repositório quando não existe")
     void registerBook_deveAdicionarLivroNoRepositorio() {
-        Book book = new Book(1, "Dom Quixote", "Cervantes");
         when(mockRepo.contains(any(Book.class))).thenReturn(false);
 
-        mockRepo.addBook(book);
+        // Simula o usuário digitando nome e autor via terminal, mais "1" para o waitForInput
+        System.setIn(new ByteArrayInputStream("Dom Quixote\nCervantes\n1\n".getBytes()));
 
-        verify(mockRepo).addBook(book);
+        BookSystem.registerBook();
+
+        verify(mockRepo).addBook(any(Book.class));
     }
 
     @Test
-    @DisplayName("registerBook: deve lançar erro se livro já existe (contains retorna true)")
-    void registerBook_deveLancarErroSeLivroJaExiste() {
-        Book book = new Book(1, "Dom Quixote", "Cervantes");
-        when(mockRepo.contains(book)).thenReturn(true);
+    @DisplayName("registerBook: não deve adicionar livro se já existe no repositório")
+    void registerBook_naoDeveAdicionarSeLivroJaExiste() {
+        when(mockRepo.contains(any(Book.class))).thenReturn(true);
 
-        boolean jaExiste = mockRepo.contains(book);
+        // Simula o usuário digitando nome e autor via terminal, mais "1" para o waitForInput
+        System.setIn(new ByteArrayInputStream("Dom Quixote\nCervantes\n1\n".getBytes()));
 
-        assertTrue(jaExiste);
-        verify(mockRepo, never()).addBook(book);
+        BookSystem.registerBook();
+
+        verify(mockRepo, never()).addBook(any(Book.class));
     }
 
     @Test
