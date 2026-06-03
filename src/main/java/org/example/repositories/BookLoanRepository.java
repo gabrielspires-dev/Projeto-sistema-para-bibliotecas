@@ -17,7 +17,7 @@ import org.example.persistence.SupabaseClient;
 import org.example.system.BookSystem;
 import org.example.system.StudentSystem;
 
-public class BookLoanRepository {
+public class BookLoanRepository implements BookLoanDAO {
 
     public void add(BookLoan loan) {
         if (DbConfig.isConfigured()) {

@@ -14,7 +14,7 @@ import org.example.persistence.SqliteCache;
 import org.example.persistence.SupabaseClient;
 import org.example.system.BookSystem;
 
-public class StudentRepository {
+public class StudentRepository implements StudentDAO {
 
     // ---- Supabase: ADD ----
     public boolean add(Student student) {
@@ -68,17 +68,22 @@ public class StudentRepository {
     }
 
     // ---- Supabase: UPDATE ----
+    @Override
     public void update(Student student) {
         if (DbConfig.isConfigured()) {
             JsonObject json = new JsonObject();
+            json.addProperty("name", student.getName());
+            json.addProperty("password", student.getPassword());
             json.addProperty("pending_penalty", student.getPendingPenalty());
             SupabaseClient.patch("students", "?id=eq." + student.getId(), json.toString());
         } else {
-            String sql = "UPDATE students SET pending_penalty=? WHERE id=?";
+            String sql = "UPDATE students SET name=?, password=?, pending_penalty=? WHERE id=?";
             try (Connection conn = SqliteCache.getConnection();
                  PreparedStatement ps = conn.prepareStatement(sql)) {
-                ps.setDouble(1, student.getPendingPenalty());
-                ps.setInt(2, student.getId());
+                ps.setString(1, student.getName());
+                ps.setString(2, student.getPassword());
+                ps.setDouble(3, student.getPendingPenalty());
+                ps.setInt(4, student.getId());
                 ps.executeUpdate();
             } catch (SQLException e) {
                 System.err.println("[cache.db] Erro ao atualizar aluno: " + e.getMessage());

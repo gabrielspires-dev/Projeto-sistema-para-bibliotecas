@@ -11,7 +11,7 @@ import org.example.persistence.DbConfig;
 import org.example.persistence.SqliteCache;
 import org.example.persistence.SupabaseClient;
 
-public class BookRepository {
+public class BookRepository implements BookDAO {
 
     public void addBook(Book book) {
         if (DbConfig.isConfigured()) {
@@ -155,4 +155,25 @@ public class BookRepository {
         Book b = new Book(rs.getInt("id"), rs.getString("title"), rs.getString("author"));
         return b;
     }
-}
+
+    @Override
+    public void updateBook(Book book) {
+        if (DbConfig.isConfigured()) {
+            JsonObject json = new JsonObject();
+            json.addProperty("title", book.getName());
+            json.addProperty("author", book.getAuthor());
+            SupabaseClient.patch("books", "?id=eq." + book.getId(), json.toString());
+        } else {
+            String sql = "UPDATE books SET title=?, author=? WHERE id=?";
+            try (Connection conn = SqliteCache.getConnection();
+                 PreparedStatement ps = conn.prepareStatement(sql)) {
+                ps.setString(1, book.getName());
+                ps.setString(2, book.getAuthor());
+                ps.setInt(3, book.getId());
+                ps.executeUpdate();
+            } catch (SQLException e) {
+                System.err.println("[cache.db] Erro ao atualizar livro: " + e.getMessage());
+            }
+        }
+    }
+}

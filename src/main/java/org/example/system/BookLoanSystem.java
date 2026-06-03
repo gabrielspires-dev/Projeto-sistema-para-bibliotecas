@@ -10,12 +10,18 @@ import org.example.exceptions.BookNotAvailableException;
 import org.example.exceptions.BookNotFoundException;
 import org.example.exceptions.PendingPenaltyException;
 import org.example.persistence.DbConfig;
+import org.example.repositories.BookLoanDAO;
 import org.example.repositories.BookLoanRepository;
 import org.example.utils.TerminalUtils;
 
 public class BookLoanSystem {
     private static int idCount = 0;
-    private static final BookLoanRepository repository = new BookLoanRepository();
+    private static BookLoanDAO repository = new BookLoanRepository();
+
+    /** Para injeção de dependência em testes. */
+    public static void setRepository(BookLoanDAO repo) {
+        repository = repo;
+    }
 
     public static BookLoan loanBook(Student student, Book book)
             throws BookNotFoundException, BookNotAvailableException, PendingPenaltyException {

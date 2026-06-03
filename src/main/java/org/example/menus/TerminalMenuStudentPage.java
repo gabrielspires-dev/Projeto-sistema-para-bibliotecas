@@ -24,8 +24,9 @@ public class TerminalMenuStudentPage {
             menu.addOption(2, "devolver empréstimo", TerminalMenuStudentPage::listAndReturn);
             menu.addOption(3, "listar seus empréstimos", TerminalMenuStudentPage::listOwnLoans);
             menu.addOption(4, "pagar multa pendente", TerminalMenuStudentPage::payPenalty);
-            menu.addOption(5, "logout", TerminalMenuStudentPage::logout);
-            menu.addOption(6, "deletar conta", TerminalMenuStudentPage::delete);
+            menu.addOption(5, "editar perfil", TerminalMenuStudentPage::editProfile);
+            menu.addOption(6, "logout", TerminalMenuStudentPage::logout);
+            menu.addOption(7, "deletar conta", TerminalMenuStudentPage::delete);
         } else {
             menu.addOption(1, "fazer login", TerminalMenuStudentPage::login);
             menu.addOption(2, "criar conta", TerminalMenuStudentPage::register);
@@ -56,6 +57,11 @@ public class TerminalMenuStudentPage {
             StudentSystem.delete(student);
         });
         TerminalMainMenu.print();
+    }
+
+    private static void editProfile() {
+        StudentAuth.getLoggedStudent().ifPresent(StudentSystem::updateProfile);
+        TerminalMenuStudentPage.print();
     }
 
     private static void payPenalty() {

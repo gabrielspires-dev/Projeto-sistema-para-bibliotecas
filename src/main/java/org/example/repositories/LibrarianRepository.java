@@ -11,7 +11,7 @@ import org.example.persistence.DbConfig;
 import org.example.persistence.SqliteCache;
 import org.example.persistence.SupabaseClient;
 
-public class LibrarianRepository {
+public class LibrarianRepository implements LibrarianDAO {
 
     public void add(Librarian librarian) {
         if (DbConfig.isConfigured()) {
@@ -104,4 +104,25 @@ public class LibrarianRepository {
         Librarian l = new Librarian(rs.getInt("id"), rs.getString("name"), rs.getString("password"));
         return l;
     }
-}
+
+    @Override
+    public void update(Librarian librarian) {
+        if (DbConfig.isConfigured()) {
+            JsonObject json = new JsonObject();
+            json.addProperty("name", librarian.getName());
+            json.addProperty("password", librarian.getPassword());
+            SupabaseClient.patch("librarians", "?id=eq." + librarian.getId(), json.toString());
+        } else {
+            String sql = "UPDATE librarians SET name=?, password=? WHERE id=?";
+            try (Connection conn = SqliteCache.getConnection();
+                 PreparedStatement ps = conn.prepareStatement(sql)) {
+                ps.setString(1, librarian.getName());
+                ps.setString(2, librarian.getPassword());
+                ps.setInt(3, librarian.getId());
+                ps.executeUpdate();
+            } catch (SQLException e) {
+                System.err.println("[cache.db] Erro ao atualizar bibliotecário: " + e.getMessage());
+            }
+        }
+    }
+}

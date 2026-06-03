@@ -4,12 +4,18 @@ import java.util.List;
 
 import org.example.entities.Student;
 import org.example.persistence.DbConfig;
+import org.example.repositories.StudentDAO;
 import org.example.repositories.StudentRepository;
 import org.example.utils.TerminalUtils;
 
 public class StudentSystem {
     private static int idCount = 0;
-    private static final StudentRepository repository = new StudentRepository();
+    private static StudentDAO repository = new StudentRepository();
+
+    /** Para injeção de dependência em testes. */
+    public static void setRepository(StudentDAO repo) {
+        repository = repo;
+    }
 
     public static Student createStudent() {
         TerminalUtils.print("Digite o seu nome:");
@@ -51,6 +57,22 @@ public class StudentSystem {
 
     public static void update(Student student) {
         repository.update(student);
+    }
+
+    public static void updateProfile(Student student) {
+        TerminalUtils.print("Editar perfil de " + student.getName());
+        TerminalUtils.print("Novo nome (Enter para manter \"" + student.getName() + "\"):");
+        String newName = TerminalUtils.nextLine().trim();
+
+        TerminalUtils.print("Nova senha (Enter para manter a atual):");
+        String newPassword = TerminalUtils.nextLine().trim();
+
+        if (!newName.isEmpty()) student.setName(newName);
+        if (!newPassword.isEmpty()) student.setPassword(newPassword);
+
+        repository.update(student);
+        TerminalUtils.print("Perfil atualizado com sucesso!");
+        TerminalUtils.waitForInput();
     }
 
     // Usado pelo PersistenceService ao carregar dados do disco.

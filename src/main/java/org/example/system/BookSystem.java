@@ -4,12 +4,18 @@ import java.util.List;
 
 import org.example.entities.Book;
 import org.example.persistence.DbConfig;
+import org.example.repositories.BookDAO;
 import org.example.repositories.BookRepository;
 import org.example.utils.TerminalUtils;
 
 public class BookSystem {
     private static int idCount = 0;
-    private static final BookRepository repository = new BookRepository();
+    private static BookDAO repository = new BookRepository();
+
+    /** Para injeção de dependência em testes. */
+    public static void setRepository(BookDAO repo) {
+        repository = repo;
+    }
 
     public static void registerBook() {
         TerminalUtils.print("Digite o nome do livro:");
@@ -68,7 +74,28 @@ public class BookSystem {
     public static List<Book> getAll() {
         return repository.getAll();
     }
+
+    public static void editBook(int id) {
+        Book book = repository.getById(id);
+
+        if (book == null) {
+            TerminalUtils.print("Livro com ID " + id + " não encontrado.");
+            TerminalUtils.waitForInput();
+            return;
+        }
+
+        TerminalUtils.print("Editando livro: " + book.getName() + " - " + book.getAuthor());
+        TerminalUtils.print("Novo título (Enter para manter \"" + book.getName() + "\"):");
+        String newName = TerminalUtils.nextLine().trim();
+
+        TerminalUtils.print("Novo autor (Enter para manter \"" + book.getAuthor() + "\"):");
+        String newAuthor = TerminalUtils.nextLine().trim();
+
+        if (!newName.isEmpty()) book.setName(newName);
+        if (!newAuthor.isEmpty()) book.setAuthor(newAuthor);
+
+        repository.updateBook(book);
+        TerminalUtils.print("Livro atualizado: " + book.getName() + " - " + book.getAuthor());
+        TerminalUtils.waitForInput();
+    }
 }
-
-
-
