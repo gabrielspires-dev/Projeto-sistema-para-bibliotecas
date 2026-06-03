@@ -8,6 +8,9 @@ import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
 
+import java.io.ByteArrayInputStream;
+import java.io.InputStream;
+
 import static org.junit.jupiter.api.Assertions.*;
 import static org.mockito.Mockito.*;
 
@@ -18,13 +21,30 @@ class LibrarianSystemTest {
     @Mock
     private LibrarianDAO mockRepo;
 
+    private InputStream originalIn;
+
+    private void setMockInput(String input) {
+        System.setIn(new ByteArrayInputStream(input.getBytes()));
+        try {
+            java.lang.reflect.Field f = org.example.utils.TerminalUtils.class.getDeclaredField("scanner");
+            java.lang.reflect.Field unsafeField = sun.misc.Unsafe.class.getDeclaredField("theUnsafe");
+            unsafeField.setAccessible(true);
+            sun.misc.Unsafe unsafe = (sun.misc.Unsafe) unsafeField.get(null);
+            unsafe.putObject(unsafe.staticFieldBase(f), unsafe.staticFieldOffset(f), new java.util.Scanner(System.in));
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+    }
+
     @BeforeEach
     void injectMock() {
+        originalIn = System.in;
         LibrarianSystem.setRepository(mockRepo);
     }
 
     @AfterEach
     void restoreDefault() {
+        System.setIn(originalIn);
         LibrarianSystem.setRepository(new org.example.repositories.LibrarianRepository());
     }
 
@@ -66,6 +86,7 @@ class LibrarianSystemTest {
     @DisplayName("delete: deve remover bibliotecário do repositório")
     void delete_deveRemoverBibliotecario() {
         Librarian librarian = new Librarian(1, "Carlos Admin", "admin123");
+        setMockInput("1\n");
 
         LibrarianSystem.delete(librarian);
 

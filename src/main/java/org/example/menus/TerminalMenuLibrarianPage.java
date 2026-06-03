@@ -43,9 +43,8 @@ public class TerminalMenuLibrarianPage {
     }
 
     private static void editBook() {
-        BookSystem.getAll().forEach(book ->
-            System.out.println("[ID " + book.getId() + "] " + book.getName() + " - " + book.getAuthor())
-        );
+        BookSystem.getAll().forEach(
+                book -> System.out.println("[ID " + book.getId() + "] " + book.getName() + " - " + book.getAuthor()));
 
         TerminalUtils.print("Digite o ID do livro para editar (ou -1 para cancelar):");
         int id = TerminalUtils.nextInt();
@@ -93,8 +92,8 @@ public class TerminalMenuLibrarianPage {
         System.out.println("ALUNOS:");
         for (Student s : StudentSystem.getStudentList()) {
             System.out.println("[ID " + s.getId() + "] " + s.getName()
-                    + " — " + s.getBookLoanQuantity() + " empréstimo(s)"
-                    + " — Multa pendente: R$ " + s.getPendingPenalty());
+                    + " | " + s.getBookLoanQuantity() + " empréstimo(s)"
+                    + " | Multa pendente: R$ " + s.getPendingPenalty());
         }
         System.out.println("------------------------------------------");
         System.out.println("BIBLIOTECÁRIOS:");
@@ -107,9 +106,8 @@ public class TerminalMenuLibrarianPage {
     }
 
     private static void listAndRemoveBook() {
-        BookSystem.getAll().forEach(book ->
-            System.out.println("[ID " + book.getId() + "] " + book.getName() + " - " + book.getAuthor())
-        );
+        BookSystem.getAll().forEach(
+                book -> System.out.println("[ID " + book.getId() + "] " + book.getName() + " - " + book.getAuthor()));
 
         TerminalUtils.print("Digite o ID para remover (ou -1 para cancelar):");
         int id = TerminalUtils.nextInt();

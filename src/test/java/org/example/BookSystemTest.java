@@ -24,6 +24,19 @@ class BookSystemTest {
 
     private InputStream originalIn;
 
+    private void setMockInput(String input) {
+        System.setIn(new ByteArrayInputStream(input.getBytes()));
+        try {
+            java.lang.reflect.Field f = org.example.utils.TerminalUtils.class.getDeclaredField("scanner");
+            java.lang.reflect.Field unsafeField = sun.misc.Unsafe.class.getDeclaredField("theUnsafe");
+            unsafeField.setAccessible(true);
+            sun.misc.Unsafe unsafe = (sun.misc.Unsafe) unsafeField.get(null);
+            unsafe.putObject(unsafe.staticFieldBase(f), unsafe.staticFieldOffset(f), new java.util.Scanner(System.in));
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+    }
+
     @BeforeEach
     void injectMock() {
         originalIn = System.in; // salva o System.in original
@@ -42,7 +55,7 @@ class BookSystemTest {
         when(mockRepo.contains(any(Book.class))).thenReturn(false);
 
         // Simula o usuário digitando nome e autor via terminal, mais "1" para o waitForInput
-        System.setIn(new ByteArrayInputStream("Dom Quixote\nCervantes\n1\n".getBytes()));
+        setMockInput("Dom Quixote\nCervantes\n1\n");
 
         BookSystem.registerBook();
 
@@ -55,7 +68,7 @@ class BookSystemTest {
         when(mockRepo.contains(any(Book.class))).thenReturn(true);
 
         // Simula o usuário digitando nome e autor via terminal, mais "1" para o waitForInput
-        System.setIn(new ByteArrayInputStream("Dom Quixote\nCervantes\n1\n".getBytes()));
+        setMockInput("Dom Quixote\nCervantes\n1\n");
 
         BookSystem.registerBook();
 
@@ -66,6 +79,7 @@ class BookSystemTest {
     @DisplayName("removeBook: deve chamar removeBook no repositório")
     void removeBook_deveRemoverLivroExistente() {
         Book book = new Book(1, "Dom Quixote", "Cervantes");
+        setMockInput("1\n");
 
         BookSystem.removeBook(book);
 

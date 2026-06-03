@@ -5,7 +5,7 @@ import java.util.Optional;
 public class TerminalMainMenu {
 
     public static void print() {
-        TerminalMenu menu = new TerminalMenu("Bem vindo ao Sistema Bibliotecário 1.0");
+        TerminalMenu menu = new TerminalMenu("Bem vindo ao Sistema Bibliotecário 6.0");
 
         menu.addOption(1, "entrar como Aluno", () -> TerminalMenuStudentPage.print());
         menu.addOption(2, "entrar como Bibliotecário", () -> TerminalMenuLibrarianPage.print());

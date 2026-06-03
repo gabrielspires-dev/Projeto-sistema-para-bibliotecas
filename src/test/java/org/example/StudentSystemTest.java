@@ -8,6 +8,9 @@ import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
 
+import java.io.ByteArrayInputStream;
+import java.io.InputStream;
+
 import static org.junit.jupiter.api.Assertions.*;
 import static org.mockito.Mockito.*;
 
@@ -18,13 +21,30 @@ class StudentSystemTest {
     @Mock
     private StudentDAO mockRepo;
 
+    private InputStream originalIn;
+
+    private void setMockInput(String input) {
+        System.setIn(new ByteArrayInputStream(input.getBytes()));
+        try {
+            java.lang.reflect.Field f = org.example.utils.TerminalUtils.class.getDeclaredField("scanner");
+            java.lang.reflect.Field unsafeField = sun.misc.Unsafe.class.getDeclaredField("theUnsafe");
+            unsafeField.setAccessible(true);
+            sun.misc.Unsafe unsafe = (sun.misc.Unsafe) unsafeField.get(null);
+            unsafe.putObject(unsafe.staticFieldBase(f), unsafe.staticFieldOffset(f), new java.util.Scanner(System.in));
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+    }
+
     @BeforeEach
     void injectMock() {
+        originalIn = System.in;
         StudentSystem.setRepository(mockRepo);
     }
 
     @AfterEach
     void restoreDefault() {
+        System.setIn(originalIn);
         StudentSystem.setRepository(new org.example.repositories.StudentRepository());
     }
 
@@ -67,7 +87,7 @@ class StudentSystemTest {
     @DisplayName("delete: deve remover aluno sem empréstimos ativos")
     void delete_deveRemoverAlunoSemEmprestimos() {
         Student student = new Student(1, "João Silva", "senha123");
-        // nenhum empréstimo adicionado, getBookLoanQuantity() == 0
+        setMockInput("1\n");
 
         StudentSystem.delete(student);
 
@@ -79,6 +99,7 @@ class StudentSystemTest {
     void delete_naoDeveRemoverAlunoComEmprestimosAtivos() {
         Student student = spy(new Student(1, "João Silva", "senha123"));
         when(student.getBookLoanQuantity()).thenReturn(2);
+        setMockInput("1\n");
 
         StudentSystem.delete(student);
 
