@@ -62,13 +62,13 @@ public class StudentSystem {
     public static void updateProfile(Student student) {
         TerminalUtils.print("Editar perfil de " + student.getName());
         TerminalUtils.print("Novo nome (Enter para manter \"" + student.getName() + "\"):");
-        String newName = TerminalUtils.nextLine().trim();
+        String newName = TerminalUtils.nextLineOrDefault(student.getName());
 
         TerminalUtils.print("Nova senha (Enter para manter a atual):");
-        String newPassword = TerminalUtils.nextLine().trim();
+        String newPassword = TerminalUtils.nextLineOrDefault(student.getPassword());
 
-        if (!newName.isEmpty()) student.setName(newName);
-        if (!newPassword.isEmpty()) student.setPassword(newPassword);
+        student.setName(newName);
+        student.setPassword(newPassword);
 
         repository.update(student);
         TerminalUtils.print("Perfil atualizado com sucesso!");

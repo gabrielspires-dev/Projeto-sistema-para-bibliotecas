@@ -91,16 +91,7 @@ public class TerminalMenuStudentPage {
 
             TerminalUtils.print("Multa pendente no perfil: R$ " + student.getPendingPenalty());
 
-            loans.forEach(loan -> {
-                System.out.println();
-                System.out.println("------------------------------------------");
-                System.out.println("ID Empréstimo : " + loan.getId());
-                System.out.println("Livro         : " + loan.getBook().getName() + " - " + loan.getBook().getAuthor());
-                System.out.println("Data retirada : " + loan.getInitialDate());
-                System.out.println("Devolução     : " + loan.getFinalDate());
-                System.out.println("Multa         : R$ " + loan.getPenalty());
-                System.out.println("------------------------------------------");
-            });
+            loans.forEach(BookLoanSystem::printLoan);
 
             TerminalUtils.waitForInput();
         });
@@ -119,15 +110,7 @@ public class TerminalMenuStudentPage {
                 return;
             }
 
-            loans.forEach(loan -> {
-                System.out.println();
-                System.out.println("------------------------------------------");
-                System.out.println("ID Empréstimo : " + loan.getId());
-                System.out.println("Livro         : " + loan.getBook().getName() + " - " + loan.getBook().getAuthor());
-                System.out.println("Devolução     : " + loan.getFinalDate());
-                System.out.println("Multa         : R$ " + loan.getPenalty());
-                System.out.println("------------------------------------------");
-            });
+            loans.forEach(BookLoanSystem::printLoan);
 
             TerminalUtils.print("Digite o ID do empréstimo para devolver (ou -1 para cancelar):");
             int id = TerminalUtils.nextInt();

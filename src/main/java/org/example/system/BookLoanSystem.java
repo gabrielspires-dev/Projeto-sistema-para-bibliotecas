@@ -56,7 +56,8 @@ public class BookLoanSystem {
 
         repository.add(loan);
         student.addBookLoan(loan);
-        BookSystem.removeBook(book);
+        // Remove o exemplar do acervo disponível sem exibir mensagem redundante.
+        BookSystem.removeBookSilently(book);
 
         TerminalUtils.print("O livro \"" + book.getName() + "\" foi emprestado para "
                 + student.getName() + " com sucesso. Devolução em 30 dias.");
@@ -87,6 +88,24 @@ public class BookLoanSystem {
         repository.add(loan);
     }
 
+    /**
+     * Imprime os detalhes de um único empréstimo formatado.
+     * Reutilizado por menus de aluno e de bibliotecário para evitar duplicação.
+     *
+     * @param loan empréstimo a exibir
+     */
+    public static void printLoan(BookLoan loan) {
+        System.out.println();
+        TerminalUtils.printSeparator();
+        TerminalUtils.printField("ID Empréstimo", loan.getId());
+        TerminalUtils.printField("Aluno", "[ID " + loan.getStudent().getId() + "] " + loan.getStudent().getName());
+        TerminalUtils.printField("Livro", loan.getBook().getName() + " - " + loan.getBook().getAuthor());
+        TerminalUtils.printField("Data retirada", TerminalUtils.formatDate(loan.getInitialDate()));
+        TerminalUtils.printField("Devolução", TerminalUtils.formatDate(loan.getFinalDate()));
+        TerminalUtils.printField("Multa", "R$ " + loan.getPenalty());
+        TerminalUtils.printSeparator();
+    }
+
     public static void printAllLoans() {
         List<BookLoan> loans = repository.getAll();
 
@@ -96,18 +115,7 @@ public class BookLoanSystem {
             return;
         }
 
-        loans.forEach(loan -> {
-            System.out.println();
-            System.out.println("------------------------------------------");
-            System.out.println("ID Empréstimo : " + loan.getId());
-            System.out.println("Aluno         : [ID " + loan.getStudent().getId() + "] " + loan.getStudent().getName());
-            System.out.println("Livro         : " + loan.getBook().getName() + " - " + loan.getBook().getAuthor());
-            System.out.println("Data retirada : " + loan.getInitialDate());
-            System.out.println("Devolução     : " + loan.getFinalDate());
-            System.out.println("Multa         : R$ " + loan.getPenalty());
-            System.out.println("------------------------------------------");
-        });
-
+        loans.forEach(BookLoanSystem::printLoan);
         TerminalUtils.waitForInput();
     }
 }

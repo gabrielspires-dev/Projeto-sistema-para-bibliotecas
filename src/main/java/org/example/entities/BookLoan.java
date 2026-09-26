@@ -11,7 +11,8 @@ public class BookLoan {
     private LocalDateTime finalDate;
     private float penalty;
 
-    public BookLoan(int id, Student student, Book book, LocalDateTime initialDate, LocalDateTime finalDate, float penalty) {
+    public BookLoan(int id, Student student, Book book, LocalDateTime initialDate, LocalDateTime finalDate,
+            float penalty) {
         this.id = id;
         this.student = student;
         this.book = book;

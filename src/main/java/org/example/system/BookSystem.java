@@ -39,10 +39,23 @@ public class BookSystem {
         TerminalUtils.waitForInput();
     }
 
+    /**
+     * Remove o livro do acervo exibindo mensagem de confirmação.
+     * Use este método em ações diretas do bibliotecário.
+     */
     public static void removeBook(Book book) {
         repository.removeBook(book);
         TerminalUtils.print("Livro " + book.getName() + ", do autor " + book.getAuthor() + " foi removido da biblioteca.");
         TerminalUtils.waitForInput();
+    }
+
+    /**
+     * Remove o livro do acervo silenciosamente, sem exibir mensagem.
+     * Use este método em chamadas internas (ex: empréstimo) para evitar
+     * mensagens redundantes ao usuário.
+     */
+    public static void removeBookSilently(Book book) {
+        repository.removeBook(book);
     }
 
     public static void removeBookById(int id) {
@@ -86,13 +99,13 @@ public class BookSystem {
 
         TerminalUtils.print("Editando livro: " + book.getName() + " - " + book.getAuthor());
         TerminalUtils.print("Novo título (Enter para manter \"" + book.getName() + "\"):");
-        String newName = TerminalUtils.nextLine().trim();
+        String newName = TerminalUtils.nextLineOrDefault(book.getName());
 
         TerminalUtils.print("Novo autor (Enter para manter \"" + book.getAuthor() + "\"):");
-        String newAuthor = TerminalUtils.nextLine().trim();
+        String newAuthor = TerminalUtils.nextLineOrDefault(book.getAuthor());
 
-        if (!newName.isEmpty()) book.setName(newName);
-        if (!newAuthor.isEmpty()) book.setAuthor(newAuthor);
+        book.setName(newName);
+        book.setAuthor(newAuthor);
 
         repository.updateBook(book);
         TerminalUtils.print("Livro atualizado: " + book.getName() + " - " + book.getAuthor());

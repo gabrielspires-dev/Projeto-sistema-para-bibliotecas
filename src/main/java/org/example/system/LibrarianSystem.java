@@ -48,13 +48,13 @@ public class LibrarianSystem {
     public static void updateProfile(Librarian librarian) {
         TerminalUtils.print("Editar perfil de " + librarian.getName());
         TerminalUtils.print("Novo nome (Enter para manter \"" + librarian.getName() + "\"):");
-        String newName = TerminalUtils.nextLine().trim();
+        String newName = TerminalUtils.nextLineOrDefault(librarian.getName());
 
         TerminalUtils.print("Nova senha (Enter para manter a atual):");
-        String newPassword = TerminalUtils.nextLine().trim();
+        String newPassword = TerminalUtils.nextLineOrDefault(librarian.getPassword());
 
-        if (!newName.isEmpty()) librarian.setName(newName);
-        if (!newPassword.isEmpty()) librarian.setPassword(newPassword);
+        librarian.setName(newName);
+        librarian.setPassword(newPassword);
 
         repository.update(librarian);
         TerminalUtils.print("Perfil atualizado com sucesso!");
